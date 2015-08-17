@@ -1,0 +1,31 @@
+【功能介绍】
+1. 获取apk的硬件加速值
+2. 分析日志中的crash信息
+3. 分析procrank文件并绘制曲线图
+4. 分析dumpsys meminfo文件并绘制曲线图
+5. 或许功能有待继续添加
+
+【运行平台】
+1. 目前只在Linux上运行，还没有到其他平台尝试
+
+【如何使用】
+Usage:  python GetDetail.py <option> <file-path or directory> 
+		option:
+    		 -H : show usage
+    		 -A : get hardwareAccelerated value in apk 
+    		 -L : find crash in logcat 
+    		 -P : make a panel for procrank file
+    		 -M : make a panel for dumpsys meminfo file
+
+python GetDetail.py -H 
+python GetDetail.py -A <apkfile-path or directory>
+python GetDetail.py -L <logfile-path or directory>
+python GetDetail.py -P <procrank-path>
+python GetDetail.py -M <dumpsys meminfo-path>
+
+【注意地方】
+1. AXMLPrinter2.jar需要与源文件放在统一级目录下，否则会出现路径异常错误
+
+【联系方式】
+Tel: 15901023880 刘建
+Mail: liujian@letv.com

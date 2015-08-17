@@ -1,0 +1,271 @@
+"""
+Default settings for apython.
+
+apython settings files are python scripts. Variables in all caps are loaded
+into the android.settings object. The following naming convention is
+recommended for settings:
+
+(MODULE)_(SETTING NAME)
+
+Settings are loaded from the following files in the given order:
+
+APYTHON_INSTALL_DIRECTORY/apython.rc (this file)
+APYTHON_INSTALL_DIRECTORY/local.rc
+~/apython.rc            # On Windows XP, "~" translates to %USERPROFILE%
+~/.apythonrc
+os.environ['APYTHONRC'] # Semicolon- (on Windows) or colon- (on OS X and
+                        # Unix) delimited list of settings files
+
+Suppose the APYTHONRC environment variable is set to:
+
+~/config/apython.rc:~/settings.rc
+
+apython will load android.settings with the contents of the following
+files, in order:
+
+APYTHON_INSTALL_DIRECTORY/apython.rc
+APYTHON_INSTALL_DIRECTORY/local.rc
+~/apython.rc
+~/.apythonrc
+~/config/apython.rc
+~/settings/apython.rc
+
+You may also override settings for a particular connect instance:
+
+    # load a custom settings file
+    android.connect(settings='~/custom/apython.rc')
+        or
+    # load a custom settings dict
+    android.connect(settings={'CUSTOM_SETTING':123})
+        or
+    # load both a custom settings file and dict
+    android.connect(settings=[ '~/custom/apython.rc',
+                               {'CUSTOM_SETTING':123} ])
+
+Settings specified in this way are accessible through the android object
+(a.settings instead of android.settings) and applied after the usual
+settings are loaded. SUPPORT FOR INSTANCE-SPECIFIC SETTINGS IS
+EXPERIMENTAL.
+"""
+
+
+APYTHON_AUTOIMPORT = [	'android.device', 'android.input', 'android.log',
+						'android.ui', 'android.home' ]
+
+"""
+If set, a.ui.unlock() will automatically unlock the passcode lock screen with
+the given passcode.
+
+The value can either be numeric (for PIN lock) or alphanumeric (for password
+lock).
+"""
+#DEVICE_PASSCODE_PIN=1234
+
+"""
+If set, a.ui.unlock() will automatically unlock the pattern lock screen with
+the given pattern. Pattern PINs are encoded as a string of digits, with digits
+assigned to dots as they are on a telephone keypad:
+
+1 2 3
+4 5 6
+7 8 9
+"""
+#DEVICE_PATTERN_PIN=1254
+
+def have_pil():
+	try:
+		import PIL
+		return True
+	except:
+		return False
+
+# Formats other than 'bmp' require PIL. You may download and install PIL from
+# http://www.pythonware.com/products/pil/
+EXPERIMENTAL_LOG_SCREENSHOT_FORMAT='png' if have_pil() else 'bmp'
+
+"""
+Calling android.connect() from a file, module, or package level setUp() or
+tearDown() method is prohibited by default because it can cause unexpected
+test report results if an Exception is raised.
+
+You can allow calls to android.connect() from outside of test methods by
+setting EXPERIMENTAL_RUNTESTS_ALLOW_CONNECT_OUTSIDE_TESTS=True. Connections
+made outside of test methods will NOT trigger connect hooks and will NOT have
+logs enabled.
+
+This setting only affects tests run through runtests.py.
+"""
+EXPERIMENTAL_RUNTESTS_ALLOW_CONNECT_OUTSIDE_TESTS=True
+
+"""
+Kill the view server when apython is unable to connect to it.
+"""
+EXPERIMENTAL_INTERNAL_KILL_UNRESPONSIVE_VIEW_SERVER=False
+
+"""
+If True, apython will support sending key events for keys that are not
+physically present on the device, provided they are part of the standard
+Android keymap.
+"""
+INPUT_EMULATE_MISSING_KEYS=True
+
+# Key/touch delays are in seconds
+INPUT_KEY_DOWN_DELAY=.1
+INPUT_KEY_UP_DELAY=.2
+INPUT_LID_DELAY=2
+
+INPUT_TEXT_CHUNK_SIZE=400
+
+"""
+The delay after text entry is calculated by:
+
+    min(a.settings.INPUT_TEXT_DELAY_MAX, max(a.settings.INPUT_TEXT_DELAY_MIN,
+				a.settings.INPUT_TEXT_DELAY(len(s))))
+"""
+INPUT_TEXT_DELAY=lambda n: (.5+.1*n)
+INPUT_TEXT_DELAY_MIN=2
+INPUT_TEXT_DELAY_MAX=30
+
+INPUT_TEXT_DELAY_ON_DEVICE=60
+
+INPUT_TOUCH_DOWN_DELAY=.1
+INPUT_TOUCH_UP_DELAY=.2
+
+# Set to True to enable adb hang recovery. THIS SHOULD BE CONSIDERED A
+# WORKAROUND ONLY; if you need to use this, it usually suggests a bug in the
+# device software.
+INTERNAL_ADB_HANG_RECOVERY=False
+# adb hang recovery (adb server restart) is initiated if an adb command
+# doesn't complete after this many seconds.
+INTERNAL_ADB_HANG_RECOVERY_TIMEOUT=10
+# Seconds to wait between killing the adb server and restarting it.
+INTERNAL_ADB_HANG_RECOVERY_DELAY=10
+
+# Inform apython that the following windows run in "compatibility mode." This
+# is needed for some applications in order for the touch coordinates to be
+# calculated properly. Each entry is a python regular expression search()ed
+# against the output of a.ui.window(). To add to this list, add a line
+# of this form:
+#
+#    INTERNAL_FORCE_COMPATIBILITY_MODE += [ ... ]
+#
+# to your custom settings file.
+#
+# The following example adds the windows for SwiFTP.apk to the list:
+#
+#    INTERNAL_FORCE_COMPATIBILITY_MODE += [ r'^org.swiftp/', r'^Instructions$' ]
+#
+INTERNAL_FORCE_COMPATIBILITY_MODE=[ ]
+
+# Found in frameworks/base/core/java/android/util/DisplayMetrics.java
+INTERNAL_COMPATIBILITY_MODE_DENSITY_DEFAULT=160
+
+INTERNAL_RETRY_ON_CONNECTION_ERROR=False
+INTERNAL_RETRY_ON_CONNECTION_ERROR_RETRIES=2
+INTERNAL_RETRY_ON_CONNECTION_ERROR_DELAY=120
+
+# Prefix for executing privileged commands in on device execution mode
+INTERNAL_SU_COMMAND='su2 0 sh -c'
+
+INTERNAL_VIEW_SERVER_PORT_RANGE=range(5939,5979,2)
+INTERNAL_VIEW_SERVER_START_RETRIES=4
+INTERNAL_VIEW_SERVER_START_RETRY_INTERVAL=3
+
+INTERNAL_VIEW_SERVER_QUERY_DEFAULT_TIMEOUT=60
+INTERNAL_VIEW_SERVER_QUERY_RESTART_TIMEOUT=.5
+
+# These constants should not be redefined
+LOG_LEVEL_NONE, LOG_LEVEL_ERROR, LOG_LEVEL_WARNING, LOG_LEVEL_INFO, LOG_LEVEL_DEBUG, LOG_LEVEL_VERBOSE, LOG_LEVEL_VERYVERBOSE = range(7)
+
+# LOG_LEVEL_FILE is deprecated. Please use LOG_LEVEL_RUNTESTS_FILE instead.
+
+# LOG_LEVEL_STDOUT controls the log output when running in interactive mode or
+# from a script without the runtests.py helper
+LOG_LEVEL_STDOUT=LOG_LEVEL_WARNING
+
+# The log file output level when running tests through runtests.py. This
+# setting applies only to trace_log. The error_log always has only
+# LOG_LEVEL_ERROR logs.
+LOG_LEVEL_RUNTESTS_FILE=LOG_LEVEL_DEBUG
+
+# The console output level when running tests through runtests.py
+LOG_LEVEL_RUNTESTS_STDOUT=LOG_LEVEL_NONE
+
+"""
+THIS SETTING ONLY APPLIES TO TESTS RUN THROUGH RUNTESTS.PY.
+
+Run and log commands on each device while it is connected. This setting takes
+tuples of the form ( COMMAND, BASE.EXT ), which will run COMMAND, saving the
+output to the file logs/XXXXX/BASE.*.EXT Commands will be run through
+"adb shell" starting when the device is connected and ending when the device is
+disconnected. By default, only the main logcat is saved. To add to this list,
+add a line of this form:
+
+	LOG_ON_RUNTESTS_CONNECT += [ ( ..., ..., ...), ... ]
+
+to your custom settings file.
+
+The following example adds logging for the other logcat buffers and kmsg:
+
+LOG_ON_RUNTESTS_CONNECT += [
+( 'logcat -cb radio; logcat -v threadtime -b radio', 'logcat_radio.txt' ),
+( 'logcat -cb events; logcat -v threadtime -b events', 'logcat_events.txt' ),
+( 'cat /proc/kmsg', 'kmsg_logs.txt' )
+]
+
+"""
+LOG_ON_RUNTESTS_CONNECT=[
+	( 'logcat -c; logcat -v threadtime', 'logcat_main.txt' ),
+]
+
+# android.ui.waitfor() will automatically press 'Force close' on ANR and force
+# close dialogs. The two settings below are exposed to allow for customization
+# on non-English devices.
+UI_DETECT_ANR_TEXT = r'^(?:Activity |Application |Process )?(.+) (is not|isn\'t) responding\.'
+UI_ANR_BUTTON_PRESS_TEXT = 'OK'
+UI_DETECT_FORCE_CLOSE_TEXT = r'(^The application (.+) has stopped unexpectedly\. Please try again\.$|^Unfortunately.* has stopped\.$)'
+UI_FORCE_CLOSE_BUTTON_PRESS_TEXT = 'OK'
+
+# Used by scrollby, page{up,down,left,right} to prevent drags from being
+# interpreted as flings
+UI_DRAG_DELAY=.1
+
+UI_SCROLLBY_SLOP=25
+
+# Default number of steps to be used when scrolling or paging
+UI_SCROLLBY_STEPS=4
+
+# Seconds to wait after each scroll step performed by
+# android.ui.widget.scrollto()
+UI_SCROLLTO_PAGING_DELAY=0
+
+# Widget types scrollto() looks for when it is not passed a listspec
+UI_SCROLLTO_LIST_TYPES = [
+	'android.widget.GridView',
+	'android.widget.ListView',
+	'android.widget.ScrollView',
+	'com.android.internal.app.AlertController$RecycleListView',
+	'com.android.internal.device.app.AlertController$RecycleListView',
+	'com.android.internal.view.menu.ExpandedMenuView',
+
+	'com.google.googlenav.ui.android.GmmListView', # Google Maps
+        'android.widget.ListPopupWindow$DropDownListView' # Phone Info Popup Window
+]
+
+# List of widget specs and types to scroll horizontally
+UI_SCROLLTO_HORIZONTAL = []
+
+# The maximum number of pages scrollto() will search through before giving up.
+UI_SCROLLTO_PAGE_LIMIT=20
+
+UI_WAITFOR_DEFAULT_TIMEOUT=15
+UI_WAITFOR_DEFAULT_POLLING_INTERVAL=1
+
+
+
+EXPERIMENTAL_DEVICE_LOGGING_BLACKLIST = []
+
+## USED FOR EARLY ICS TOUCH DEVICE DRIVERS WHICH HADNT PROPERLY IMPLEMENTED
+## ICS RECOMMEND TOUCH PROTOCOL, "SET TO TRUE TO ENABLE"
+INTERNAL_TOUCH_REQUIRES_DOUBLE_SYNC = False
+

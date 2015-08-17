@@ -1,0 +1,6 @@
+../testcases/uiAutomator.py:TestUiAutomator.testNetworkSpeed
+../testcases/cloudLivePerformance.py:TestPlayerPerformance.testChangeOneChannel
+../testcases/cloudLivePerformance.py:TestPlayerPerformance.testChangeTwoChannel
+../testcases/cloudLivePerformance.py:TestPlayerPerformance.testChangeThreeChannel
+../testcases/cloudLivePerformance.py:TestPlayerPerformance.testChangeFourChannel
+../testcases/cloudLivePerformance.py:TestPlayerPerformance.testChangeFiveChannel

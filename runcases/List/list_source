@@ -1,0 +1,8 @@
+../testcases/ChannelScan.py:TestChannelScan.testATVAutoScanChannel
+../testcases/TunerBase.py:TestTunerBase.testChannelChangeByNumber
+../testcases/TunerBase.py:TestTunerBase.testChannelUpByChannelKey
+../testcases/TunerBase.py:TestTunerBase.testChannelDownByChannelKey
+../testcases/TunerBase.py:TestTunerBase.testChangeATVScreenRate
+../testcases/SourceSwitch.py:TestSourceSwitch.testSwitchSourceByList
+../testcases/SourceSwitch.py:TestSourceSwitch.testSwitchSourceBySource
+../testcases/SourceSwitch.py:TestSourceSwitch.testSwitchSourceByKey
